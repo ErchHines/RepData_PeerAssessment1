@@ -1,13 +1,11 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "Week_2"
+author: "Erich Hines"
+date: "March 21, 2018"
+output: html_document
 ---
 
-
-## Loading and preprocessing the data
-
+###Setup  
 
 This loads the data, transforms the date column into a date and then aggregates the number of steps by date, so that we get the number of steps taken each day. Note that the aggregate function omits NA values by default. 
 
@@ -27,9 +25,6 @@ steps  <- aggregate(steps ~ date, activity, sum)
 steps2 <- aggregate(steps ~ interval, activity, mean)
 
 ```
-
-
-## What is mean total number of steps taken per day?
 
 ###Histogram
 
@@ -52,9 +47,6 @@ mean(steps$steps)
 median(steps$steps)
 ```
 
-
-## What is the average daily activity pattern?
-
 ###Time Series Plot
 
 Using the steps2 data frame created above, the plot below shows the time interval in 5 minute increments on the x axis.
@@ -68,7 +60,8 @@ plot(x = steps2$interval, y = steps2$steps,
 )
 ```
 
-## Imputing missing values
+
+### Imputing Missing Values
 
 First, a table is created where TRUE shows the number of missing values in the activity set. Second, the activity dataset is subsetted based on whether there are missing values, and the mean of the steps for each interval is merged in to impute values. 
 
@@ -100,28 +93,21 @@ median(steps2Hist$steps)
 
 With the NA values imputed based on interval means, the median increases slightly and the meadian and the mean are now the same. 
 
-## Are there differences in activity patterns between weekdays and weekends?
-
+### Time Plot grouped by weekday or weekend
 
 ```{r, echo = TRUE}
 activityImputed$weekday <- weekdays(activityImputed$date)
 
-activityImputed$weekday[
-  activityImputed$weekday %in% c("Monday","Tuesday","Wednesday",
-                                 "Thursday","Friday")] <- "Weekday"
+activityImputed$weekday[activityImputed$weekday %in% c("Monday","Tuesday","Wednesday","Thursday","Friday")] <- "Weekday"
 
-activityImputed$weekday[
-  activityImputed$weekday %in% c("Saturday","Sunday")] <- "Weekend"
+activityImputed$weekday[activityImputed$weekday %in% c("Saturday","Sunday")] <- "Weekend"
 
-steps2Impute <- aggregate(
-  steps ~ interval + weekday, activityImputed, mean
-)
+steps2Impute <- aggregate(steps ~ interval + weekday, activityImputed, mean)
 
 ggplot(
   data = steps2Impute, 
   aes(x = interval, y = steps, group = weekday)) + 
   ylab("Number of Steps") +
-  geom_line() + facet_wrap(~weekday, ncol = 1
-)
+  geom_line() + facet_wrap(~weekday, ncol = 1)
 
 ```

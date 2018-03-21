@@ -14,8 +14,23 @@ This loads the data, transforms the date column into a date and then aggregates 
 I am somewhat confused on the parts where it asks for histogram, mean, and median. The assignment says "number of steps taken each day" whcih I have put below. However, it seems it like it could be asking for "number of steps taken each day for each interval"? I'm not sure. Maybe I'm reading it or doing something wrong??
 
 
-```{r, echo = TRUE}
+
+```r
 library(lubridate)
+```
+
+```
+## 
+## Attaching package: 'lubridate'
+```
+
+```
+## The following object is masked from 'package:base':
+## 
+##     date
+```
+
+```r
 library(ggplot2)
 
 activity <- read.csv("activity.csv")
@@ -25,7 +40,6 @@ activity$date <- ymd(activity$date)
 steps  <- aggregate(steps ~ date, activity, sum)
 
 steps2 <- aggregate(steps ~ interval, activity, mean)
-
 ```
 
 
@@ -35,7 +49,8 @@ steps2 <- aggregate(steps ~ interval, activity, mean)
 
 This is a histogram showing the frequency of the number of steps taken each day.
 
-```{r, echo = TRUE}
+
+```r
 hist(steps$steps,
   col  = "blue",
   main = "Histogram of steps taken per day",
@@ -43,13 +58,27 @@ hist(steps$steps,
 )
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
 ###The Mean and The Median
 
 This shows the mean and median of steps taken per day
 
-```{r, echo = TRUE}
+
+```r
 mean(steps$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(steps$steps)
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -59,7 +88,8 @@ median(steps$steps)
 
 Using the steps2 data frame created above, the plot below shows the time interval in 5 minute increments on the x axis.
 
-```{r, echo = TRUE}
+
+```r
 plot(x = steps2$interval, y = steps2$steps,
   type = "l",
   main = "Average Steps per day in 5 Minute increments",
@@ -68,13 +98,24 @@ plot(x = steps2$interval, y = steps2$steps,
 )
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
 ## Imputing missing values
 
 First, a table is created where TRUE shows the number of missing values in the activity set. Second, the activity dataset is subsetted based on whether there are missing values, and the mean of the steps for each interval is merged in to impute values. 
 
-```{r, echo = TRUE}
-table(is.na(activity$steps))
 
+```r
+table(is.na(activity$steps))
+```
+
+```
+## 
+## FALSE  TRUE 
+## 15264  2304
+```
+
+```r
 stepsReport <- subset(activity, is.na(activity$steps) == FALSE)
 stepsNA     <- subset(activity, is.na(activity$steps) == TRUE)
 
@@ -92,10 +133,24 @@ hist(steps2Hist$steps,
   main = "Histogram of steps taken per day",
   xlab = "Number of Steps"
 )
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+```r
 mean(steps2Hist$steps)
-median(steps2Hist$steps)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
+median(steps2Hist$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 With the NA values imputed based on interval means, the median increases slightly and the meadian and the mean are now the same. 
@@ -103,7 +158,8 @@ With the NA values imputed based on interval means, the median increases slightl
 ## Are there differences in activity patterns between weekdays and weekends?
 
 
-```{r, echo = TRUE}
+
+```r
 activityImputed$weekday <- weekdays(activityImputed$date)
 
 activityImputed$weekday[
@@ -123,5 +179,6 @@ ggplot(
   ylab("Number of Steps") +
   geom_line() + facet_wrap(~weekday, ncol = 1
 )
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
